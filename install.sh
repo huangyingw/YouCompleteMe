@@ -8,3 +8,4 @@ brew install caskroom/cask/brew-cask
 brew cask install cargo
 git submodule update --init --recursive
 ./install.py --all
+brew unlink python
