@@ -1,0 +1,12 @@
+[remote "Valloric"]
+	url = git@github.com:Valloric/YouCompleteMe.git
+    fetch = +refs/heads/*:refs/remotes/Valloric/*
+[remote "github"]
+    url = git@github.com:huangyingw/YouCompleteMe.git
+    fetch = +refs/heads/*:refs/remotes/github/*
+[push]
+    remote = origin
+    remote = github
+[gsync]
+    remote = Valloric
+    branch = master
