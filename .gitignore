@@ -60,3 +60,4 @@ cpp/llvm/tools/clang/www/*
 doc/tags
 python/ycm/tests/.ropeproject/
 python/ycm/.ropeproject/
+node_modules/
