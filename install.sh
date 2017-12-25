@@ -12,7 +12,7 @@ then
     apt-get update
     apt-get install -y python-dev mono-complete golang-go
     curl -sL https://deb.nodesource.com/setup | bash -
-    apt-get install -y nodejs npm
+    apt-get install -y nodejs npm cmake
     npm install xbuild
     curl -sSf https://static.rust-lang.org/rustup.sh | sh
 else
