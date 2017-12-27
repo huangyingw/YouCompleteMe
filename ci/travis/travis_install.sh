@@ -22,9 +22,10 @@ source ci/travis/travis_install.${TRAVIS_OS_NAME}.sh
 
 PYENV_ROOT="${HOME}/.pyenv"
 
-if [ ! -d "${PYENV_ROOT}/.git" ]; then
-  rm -rf ${PYENV_ROOT}
-  git clone https://github.com/yyuu/pyenv.git ${PYENV_ROOT}
+if [ ! -d "${PYENV_ROOT}/.git" ]
+then
+    rm -rf ${PYENV_ROOT}
+    git clone https://github.com/yyuu/pyenv.git ${PYENV_ROOT}
 fi
 pushd ${PYENV_ROOT}
 git fetch --tags
@@ -35,12 +36,14 @@ export PATH="${PYENV_ROOT}/bin:${PATH}"
 
 eval "$(pyenv init -)"
 
-if [ "${YCM_PYTHON_VERSION}" == "2.6" ]; then
-  PYENV_VERSION="2.6.6"
-elif [ "${YCM_PYTHON_VERSION}" == "2.7" ]; then
-  PYENV_VERSION="2.7.6"
+if [ "${YCM_PYTHON_VERSION}" == "2.6" ]
+then
+    PYENV_VERSION="2.6.6"
+elif [ "${YCM_PYTHON_VERSION}" == "2.7" ]
+then
+    PYENV_VERSION="2.7.6"
 else
-  PYENV_VERSION="3.3.6"
+    PYENV_VERSION="3.3.6"
 fi
 
 pyenv install --skip-existing ${PYENV_VERSION}
