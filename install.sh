@@ -4,7 +4,7 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 cd "$SCRIPTPATH"
 
 OS=`uname`
-if [ $OS != "Darwin" ];
+if [ $OS != "Darwin" ]
 then
     . /etc/lsb-release
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
@@ -24,7 +24,7 @@ fi
 git submodule update --init --recursive
 ./install.py --all
 
-if [ $OS == "Darwin" ];
+if [ $OS == "Darwin" ]
 then
     brew unlink python
 fi
