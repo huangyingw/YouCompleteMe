@@ -24,7 +24,7 @@ fi
 git submodule update --init --recursive
 ./install.py --all
 
-if [ $OS == "Darwin" ]
+if [ "$OS" == "Darwin" ]
 then
     brew unlink python
 fi

@@ -10,3 +10,5 @@
 [gsync]
     remote = Valloric
     branch = master
+[commit]
+	message = n
