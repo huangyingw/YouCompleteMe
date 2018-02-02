@@ -27,10 +27,9 @@ export PATH=${HOME}/bin:${PATH}
 
 PYENV_ROOT="${HOME}/.pyenv"
 
-if [ ! -d "${PYENV_ROOT}/.git" ]
-then
-    rm -rf ${PYENV_ROOT}
-    git clone https://github.com/yyuu/pyenv.git ${PYENV_ROOT}
+if [ ! -d "${PYENV_ROOT}/.git" ]; then
+  rm -rf ${PYENV_ROOT}
+  git clone https://github.com/yyuu/pyenv.git ${PYENV_ROOT}
 fi
 pushd ${PYENV_ROOT}
 git fetch --tags
@@ -43,7 +42,6 @@ eval "$(pyenv init -)"
 
 if [ "${YCM_PYTHON_VERSION}" == "2.7" ]; then
   PYENV_VERSION="2.7.14"
-then
 else
   PYENV_VERSION="3.4.7"
 fi
