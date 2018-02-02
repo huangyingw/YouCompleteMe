@@ -27,28 +27,23 @@ export PATH=${HOME}/bin:${PATH}
 
 PYENV_ROOT="${HOME}/.pyenv"
 
-if [ ! -d "${PYENV_ROOT}/.git" ]
-then
-    rm -rf ${PYENV_ROOT}
-    git clone https://github.com/yyuu/pyenv.git ${PYENV_ROOT}
+if [ ! -d "${PYENV_ROOT}/.git" ]; then
+  rm -rf ${PYENV_ROOT}
+  git clone https://github.com/yyuu/pyenv.git ${PYENV_ROOT}
 fi
 pushd ${PYENV_ROOT}
 git fetch --tags
-git checkout v1.0.8
+git checkout v1.2.1
 popd
 
 export PATH="${PYENV_ROOT}/bin:${PATH}"
 
 eval "$(pyenv init -)"
 
-if [ "${YCM_PYTHON_VERSION}" == "2.6" ]
-then
-    PYENV_VERSION="2.6.6"
-elif [ "${YCM_PYTHON_VERSION}" == "2.7" ]
-then
-    PYENV_VERSION="2.7.6"
+if [ "${YCM_PYTHON_VERSION}" == "2.7" ]; then
+  PYENV_VERSION="2.7.14"
 else
-    PYENV_VERSION="3.3.6"
+  PYENV_VERSION="3.4.7"
 fi
 
 # In order to work with ycmd, python *must* be built as a shared library. This
