@@ -21,7 +21,7 @@ else
 fi
 
 git submodule update --init --recursive
-./install.py --all
+/usr/bin/python install.py --all
 
 if [ $(uname) == "Darwin" ]
 then
