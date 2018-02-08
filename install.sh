@@ -22,6 +22,7 @@ fi
 
 git submodule update --init --recursive
 /usr/bin/python install.py --all
+git submodule foreach --recursive ~/loadrc/gitrc/grsh.sh
 
 if [ $(uname) == "Darwin" ]
 then
