@@ -152,6 +152,9 @@ def _MockVimOptionsEval( value ):
   if value == '&hidden':
     return 0
 
+  if value == '&expandtab':
+    return 1
+
   return None
 
 
@@ -199,6 +202,9 @@ def _MockVimEval( value ):
   if value == 'tagfiles()':
     return [ 'tags' ]
 
+  if value == 'shiftwidth()':
+    return 2
+
   result = _MockVimOptionsEval( value )
   if result is not None:
     return result
@@ -215,7 +221,7 @@ def _MockVimEval( value ):
   if match:
     return match.group( 'filepath' )
 
-  raise ValueError( 'Unexpected evaluation: {0}'.format( value ) )
+  raise VimError( 'Unexpected evaluation: {0}'.format( value ) )
 
 
 def _MockWipeoutBuffer( buffer_number ):
@@ -260,7 +266,9 @@ class VimBuffer( object ):
                       modified = False,
                       bufhidden = '',
                       window = None,
-                      omnifunc = None ):
+                      omnifunc = None,
+                      visual_start = None,
+                      visual_end = None ):
     self.name = os.path.realpath( name ) if name else ''
     self.number = number
     self.contents = contents
@@ -275,6 +283,8 @@ class VimBuffer( object ):
      'mod': modified,
      'bh': bufhidden
     }
+    self.visual_start = visual_start
+    self.visual_end = visual_end
 
 
   def __getitem__( self, index ):
@@ -293,6 +303,14 @@ class VimBuffer( object ):
   def GetLines( self ):
     """Returns the contents of the buffer as a list of unicode strings."""
     return [ ToUnicode( x ) for x in self.contents ]
+
+
+  def mark( self, name ):
+    if name == '<':
+      return self.visual_start
+    if name == '>':
+      return self.visual_end
+    raise ValueError( 'Unexpected mark: {name}'.format( name = name ) )
 
 
 class VimBuffers( object ):
@@ -381,6 +399,7 @@ def MockVimModule():
 
   VIM_MOCK.buffers = {}
   VIM_MOCK.eval = MagicMock( side_effect = _MockVimEval )
+  VIM_MOCK.error = VimError
   sys.modules[ 'vim' ] = VIM_MOCK
 
   return VIM_MOCK
