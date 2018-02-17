@@ -1,5 +1,5 @@
 [remote "Valloric"]
-	url = git@github.com:Valloric/YouCompleteMe.git
+    url = git@github.com:Valloric/YouCompleteMe.git
     fetch = +refs/heads/*:refs/remotes/Valloric/*
 [remote "github"]
     url = git@github.com:huangyingw/YouCompleteMe.git
@@ -11,4 +11,10 @@
     remote = Valloric
     branch = master
 [commit]
-	message = n
+    message = n
+[branch "python3/dev.fix"]
+    remote = origin
+    merge = refs/heads/python3/dev.fix
+[branch "dev.fix"]
+    remote = origin
+    merge = refs/heads/dev.fix

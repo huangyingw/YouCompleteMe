@@ -826,7 +826,7 @@ Quick Feature Summary
 **NOTE**: Java support is currently experimental. Please let us know your
 [feedback](#contact).
 
-* Semantic auto-completion
+* Semantic auto-completion with automatic import insertion
 * Go to definition (`GoTo`, `GoToDefinition`, and `GoToDeclaration` are
   identical)
 * Reference finding (`GoToReferences`)
@@ -834,7 +834,8 @@ Quick Feature Summary
 * Renaming symbols (`RefactorRename <new name>`)
 * View documentation comments for identifiers (`GetDoc`)
 * Type information for identifiers (`GetType`)
-* Automatically fix certain errors (`FixIt`)
+* Automatically fix certain errors including code generation  (`FixIt`)
+* Code formatting (`Format`)
 * Detection of java projects
 * Management of `jdt.ls` server instance
 
@@ -1185,6 +1186,9 @@ package you have in the virtual environment.
 
 4. Edit a Java file from your project.
 
+For the best experience, we highly recommend at least Vim 8.0.1493 when using
+Java support with YouCompleteMe.
+
 #### Java Project Files
 
 In order to provide semantic analysis, the Java completion engine requires
@@ -1497,6 +1501,12 @@ Technically the command invokes completer-specific commands.  If the first
 argument is of the form `ft=...` the completer for that file type will be used
 (for example `ft=cpp`), else the native completer of the current buffer will be
 used.
+
+This command also accepts a range that can either be specified through a
+selection in one of Vim's visual modes (see `:h visual-use`) or on the command
+line. For instance, `:2,5YcmCompleter` will apply the command from line 2 to
+line 5. This is useful for [the `Format` subcommand](#the-format-subcommand).
+
 Call `YcmCompleter` without further arguments for a list of the
 commands you can call for the current completer.
 
@@ -1696,7 +1706,7 @@ latency.
 
 Supported in filetypes: `c, cpp, objc, objcpp`
 
-### Refactoring and FixIt Commands
+### Refactoring Commands
 
 These commands make changes to your source code in order to perform refactoring
 or code correction. YouCompleteMe does not perform any action which cannot be
@@ -1774,6 +1784,17 @@ any such prompts. This leaves the Refactor operation partially complete and must
 be manually corrected using Vim's undo features. The quickfix list is *not*
 populated in this case. Inspect `:buffers` or equivalent (see `:help buffers`)
 to see the buffers that were opened by the command.
+
+#### The `Format` subcommand
+
+This commands formats the whole buffer or some part of it according to the value
+of the Vim options `shiftwidth` and `expandtab` (see `:h 'sw'` and `:h et`
+respectively). To format a specific part of your document, you can either select
+it in one of Vim's visual modes (see `:h visual-use`) and run the command or
+directly enter the range on the command line, e.g. `:2,5YcmCompleter Format` to
+format it from line 2 to line 5.
+
+Supported in filetypes: `java`
 
 ### Miscellaneous Commands
 
