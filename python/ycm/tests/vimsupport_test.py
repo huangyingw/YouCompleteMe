@@ -26,13 +26,14 @@ from builtins import *  # noqa
 
 from ycm.tests import PathToTestFile
 from ycm.tests.test_utils import ( CurrentWorkingDirectory, ExtendedMock,
-                                   MockVimBuffers, MockVimCommand,
-                                   MockVimModule, VimBuffer, VimError )
+                                   MockVimBuffers, MockVimModule, VimBuffer,
+                                   VimError )
 MockVimModule()
 
 from ycm import vimsupport
 from nose.tools import eq_
-from hamcrest import assert_that, calling, contains, equal_to, has_entry, raises
+from hamcrest import ( assert_that, calling, contains, empty, equal_to,
+                       has_entry, raises )
 from mock import MagicMock, call, patch
 from ycmd.utils import ToBytes
 import os
@@ -718,11 +719,6 @@ def ReplaceChunks_SingleFile_Open_test( vim_command,
       'type': 'F'
     } ] ) ) ),
   ] )
-  vim_command.assert_has_exact_calls( [
-    call( 'botright copen' ),
-    call( 'silent! wincmd p' )
-  ] )
-  set_fitting_height.assert_called_once_with()
 
   # And it is ReplaceChunks that prints the message showing the number of
   # changes
@@ -816,10 +812,7 @@ def ReplaceChunks_SingleFile_NotOpen_test( vim_command,
   vim_command.assert_has_exact_calls( [
     call( 'lclose' ),
     call( 'hide' ),
-    call( 'botright copen' ),
-    call( 'silent! wincmd p' )
   ] )
-  set_fitting_height.assert_called_once_with()
 
   # And update the quickfix list
   vim_eval.assert_has_exact_calls( [
@@ -1201,10 +1194,7 @@ def ReplaceChunks_MultiFile_Open_test( vim_command,
   vim_command.assert_has_exact_calls( [
     call( 'lclose' ),
     call( 'hide' ),
-    call( 'botright copen' ),
-    call( 'silent! wincmd p' )
   ] )
-  set_fitting_height.assert_called_once_with()
 
   # And update the quickfix list with each entry
   vim_eval.assert_has_exact_calls( [
@@ -1255,32 +1245,30 @@ def _BuildChunk( start_line,
   }
 
 
-@patch( 'vim.eval', new_callable = ExtendedMock )
-def AddDiagnosticSyntaxMatch_ErrorInMiddleOfLine_test( vim_eval ):
+def GetDiagnosticMatchPattern_ErrorInMiddleOfLine_test():
   current_buffer = VimBuffer(
     'some_file',
     contents = [ 'Highlight this error please' ]
   )
 
   with patch( 'vim.current.buffer', current_buffer ):
-    vimsupport.AddDiagnosticSyntaxMatch( 1, 16, 1, 21 )
+    assert_that(
+      vimsupport.GetDiagnosticMatchPattern( 1, 16, 1, 21 ),
+      equal_to( '\%1l\%16c\_.\{-}\%1l\%21c' )
+    )
 
-  vim_eval.assert_called_once_with(
-    r"matchadd('YcmErrorSection', '\%1l\%16c\_.\{-}\%1l\%21c')" )
 
-
-@patch( 'vim.eval', new_callable = ExtendedMock )
-def AddDiagnosticSyntaxMatch_WarningAtEndOfLine_test( vim_eval ):
+def AddDiagnosticSyntaxMatch_WarningAtEndOfLine_test():
   current_buffer = VimBuffer(
     'some_file',
     contents = [ 'Highlight this warning' ]
   )
 
   with patch( 'vim.current.buffer', current_buffer ):
-    vimsupport.AddDiagnosticSyntaxMatch( 1, 16, 1, 23, is_error = False )
-
-  vim_eval.assert_called_once_with(
-    r"matchadd('YcmWarningSection', '\%1l\%16c\_.\{-}\%1l\%23c')" )
+    assert_that(
+      vimsupport.GetDiagnosticMatchPattern( 1, 16, 1, 23 ),
+      equal_to( '\%1l\%16c\_.\{-}\%1l\%23c' )
+    )
 
 
 @patch( 'vim.command', new_callable=ExtendedMock )
@@ -1373,22 +1361,16 @@ def BufferIsVisibleForFilename_test():
     eq_( vimsupport.BufferIsVisibleForFilename( 'another_filename' ), False )
 
 
-@patch( 'vim.command',
-        side_effect = MockVimCommand,
-        new_callable = ExtendedMock )
-def CloseBuffersForFilename_test( vim_command, *args ):
+def CloseBuffersForFilename_test():
   vim_buffers = [
     VimBuffer( 'some_filename', number = 2 ),
     VimBuffer( 'some_filename', number = 5 )
   ]
 
-  with patch( 'vim.buffers', vim_buffers ):
+  with MockVimBuffers( vim_buffers, vim_buffers[ 0 ] ) as vim:
     vimsupport.CloseBuffersForFilename( 'some_filename' )
 
-  vim_command.assert_has_exact_calls( [
-    call( 'silent! bwipeout! 2' ),
-    call( 'silent! bwipeout! 5' )
-  ], any_order = True )
+  assert_that( vim.buffers, empty() )
 
 
 @patch( 'vim.command', new_callable = ExtendedMock )
