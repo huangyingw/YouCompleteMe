@@ -27,8 +27,3 @@ git submodule update --init --recursive
 /usr/bin/python install.py --all
 git submodule foreach --recursive ~/loadrc/gitrc/grsh.sh
 git submodule foreach --recursive ~/loadrc/gitrc/gclean.sh
-
-if [ $(uname) == "Darwin" ]
-then
-    brew unlink python
-fi
