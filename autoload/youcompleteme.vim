@@ -565,6 +565,9 @@ function! s:PollFileParseResponse( ... )
   endif
 
   exec s:python_command "ycm_state.HandleFileParseRequest()"
+  if s:Pyeval( "ycm_state.ShouldResendFileParseRequest()" )
+    call s:OnFileReadyToParse( 1 )
+  endif
 endfunction
 
 
@@ -588,12 +591,20 @@ endfunction
 
 
 function! s:OnInsertChar()
+  if !s:AllowedToCompleteInCurrentBuffer()
+    return
+  endif
+
   call timer_stop( s:pollers.completion.id )
   call s:CloseCompletionMenu()
 endfunction
 
 
 function! s:OnDeleteChar( key )
+  if !s:AllowedToCompleteInCurrentBuffer()
+    return a:key
+  endif
+
   call timer_stop( s:pollers.completion.id )
   if pumvisible()
     return "\<C-y>" . a:key

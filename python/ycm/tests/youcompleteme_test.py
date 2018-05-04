@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2017 YouCompleteMe contributors
+# Copyright (C) 2016-2018 YouCompleteMe contributors
 #
 # This file is part of YouCompleteMe.
 #
@@ -207,7 +207,8 @@ def YouCompleteMe_DebugInfo_ServerRunning_test( ycm ):
         'Extra configuration path: .*testdata[/\\\\]\\.ycm_extra_conf\\.py\n'
         '(?(CLANG)C-family completer debug information:\n'
         '  Compilation database path: None\n'
-        '  Flags: \\[\'_TEMP_FILE_\'.*\\]\n)'
+        '  Flags: \\[\'_TEMP_FILE_\'.*\\]\n'
+        '  Translation unit: .+\n)'
         'Server running at: .+\n'
         'Server process ID: \d+\n'
         'Server logfiles:\n'
@@ -337,7 +338,7 @@ def YouCompleteMe_ToggleLogs_WithoutParameters_NoSelection_test(
 def YouCompleteMe_GetDefinedSubcommands_ListFromServer_test( ycm ):
   current_buffer = VimBuffer( 'buffer' )
   with MockVimBuffers( [ current_buffer ], current_buffer ):
-    with patch( 'ycm.client.base_request.JsonFromFuture',
+    with patch( 'ycm.client.base_request._JsonFromFuture',
                 return_value = [ 'SomeCommand', 'AnotherCommand' ] ):
       assert_that(
         ycm.GetDefinedSubcommands(),
@@ -356,7 +357,7 @@ def YouCompleteMe_GetDefinedSubcommands_ErrorFromServer_test( ycm,
                                                               logger ):
   current_buffer = VimBuffer( 'buffer' )
   with MockVimBuffers( [ current_buffer ], current_buffer ):
-    with patch( 'ycm.client.base_request.JsonFromFuture',
+    with patch( 'ycm.client.base_request._JsonFromFuture',
                 side_effect = ServerError( 'Server error' ) ):
       result = ycm.GetDefinedSubcommands()
 
@@ -374,7 +375,7 @@ def YouCompleteMe_ShowDetailedDiagnostic_MessageFromServer_test(
 
   current_buffer = VimBuffer( 'buffer' )
   with MockVimBuffers( [ current_buffer ], current_buffer ):
-    with patch( 'ycm.client.base_request.JsonFromFuture',
+    with patch( 'ycm.client.base_request._JsonFromFuture',
                 return_value = { 'message': 'some_detailed_diagnostic' } ):
       ycm.ShowDetailedDiagnostic(),
 
@@ -1039,3 +1040,29 @@ def YouCompleteMe_OnPeriodicTick_ValidResponse_test( ycm,
     mock_future.result.assert_called()
     post_data_to_handler_async.assert_called() # Poll again!
     assert_that( ycm._message_poll_request is not None )
+
+
+@YouCompleteMeInstance()
+@patch( 'ycm.client.completion_request.CompletionRequest.OnCompleteDone' )
+def YouCompleteMe_OnCompleteDone_CompletionRequest_test( ycm,
+                                                         on_complete_done ):
+  current_buffer = VimBuffer( 'current_buffer' )
+  with MockVimBuffers( [ current_buffer ], current_buffer, ( 1, 1 ) ):
+    ycm.SendCompletionRequest()
+  ycm.OnCompleteDone()
+  on_complete_done.assert_called()
+
+
+@YouCompleteMeInstance()
+@patch( 'ycm.client.completion_request.CompletionRequest.OnCompleteDone' )
+def YouCompleteMe_OnCompleteDone_NoCompletionRequest_test( ycm,
+                                                           on_complete_done ):
+  ycm.OnCompleteDone()
+  on_complete_done.assert_not_called()
+
+
+@YouCompleteMeInstance()
+def YouCompleteMe_ShouldResendFileParseRequest_NoParseRequest_test( ycm ):
+  current_buffer = VimBuffer( 'current_buffer' )
+  with MockVimBuffers( [ current_buffer ], current_buffer ):
+    assert_that( ycm.ShouldResendFileParseRequest(), equal_to( False ) )
