@@ -12,9 +12,9 @@
     branch = master
 [commit]
     message = n
-[branch "python3/dev.fix"]
+[branch "python3/dev"]
     remote = origin
-    merge = refs/heads/python3/dev.fix
+    merge = refs/heads/python3/dev
 [branch "dev"]
     remote = origin
     merge = refs/heads/dev
