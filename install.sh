@@ -24,7 +24,7 @@ else
 fi
 
 git submodule update --init --recursive
-/usr/bin/python install.py --all
+python install.py --all
 git submodule update --recursive
 git submodule foreach --recursive ~/loadrc/gitrc/grsh.sh
 git submodule foreach --recursive ~/loadrc/gitrc/gclean.sh
